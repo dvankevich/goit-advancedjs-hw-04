@@ -24,21 +24,27 @@ const iziCommon = {
   imageWidth: 24,
 };
 
-const iziError = {
-  ...iziCommon,
-  color: '#ef4040',
-  iconUrl: 'error-icon.svg', // зображення має бути у папці public
+const notifications = {
+  success: {
+    ...iziCommon,
+    title: 'OK',
+    color: '#59a10d',
+    iconUrl: 'ok-icon.svg',
+  },
+  error: {
+    ...iziCommon,
+    title: 'Error',
+    color: '#ef4040',
+    iconUrl: 'error-icon.svg',
+  },
+  warning: {
+    ...iziCommon,
+    title: 'Warning',
+    color: '#ffa000',
+    iconUrl: 'caution-icon.svg',
+  },
 };
 
-const iziWarning = {
-  ...iziCommon,
-  title: 'Warning',
-  color: '#ffa000',
-  iconUrl: 'caution-icon.svg',
-};
-
-const loadMessageMarkdown =
-  '<span class="loader">Loading images, please wait...</span>';
 const myGallery = document.querySelector('.gallery');
 const searchButton = document.querySelector('.search-button');
 const searchInput = document.querySelector('.search-input');
@@ -60,7 +66,7 @@ function searchButtonHandler(event) {
 
   if (!searchTerm || searchTerm.length < 3) {
     iziToast.warning({
-      ...iziWarning,
+      ...notifications.warning,
       message: 'Enter data for search, please. Min. 3 symbols.',
     });
     // console.log('Enter data for search, please. Min. 3 symbols.');
@@ -79,7 +85,7 @@ function searchButtonHandler(event) {
     .then(images => {
       if (images.hits.length === 0) {
         iziToast.error({
-          ...iziError,
+          ...notifications.error,
           message:
             'Sorry, there are no images matching<br> your search query. Please, try again!',
         });
