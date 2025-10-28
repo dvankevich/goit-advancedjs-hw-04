@@ -1,4 +1,5 @@
-import { getImages } from './js/pixabay-api';
+//import { getImages } from './js/pixabay-api';
+import { getImagesAxios } from './js/pixabay-api';
 import { getGalleryMarkdown, drawGallery } from './js/render-functions';
 import SimpleLightbox from 'simplelightbox';
 // Додатковий імпорт стилів
@@ -78,7 +79,7 @@ function searchButtonHandler(event) {
   //console.log(`fetch data from backend with search term: ${searchTerm}`);
   refs.loader.classList.add('is-active');
 
-  getImages(searchTerm)
+  getImagesAxios(searchTerm)
     .finally(() => {
       refs.loader.classList.remove('is-active');
     })

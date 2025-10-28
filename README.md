@@ -3,3 +3,5 @@
 ```
 npm install izitoast simplelightbox crypto-js axios
 ```
+
+- [Test cases](./tests/test-cases.md)
