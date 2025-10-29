@@ -4,6 +4,8 @@ import {
   drawGallery,
   messageWarning,
   messageError,
+  showHtmlObject,
+  hideHtmlObject,
 } from './js/render-functions';
 import SimpleLightbox from 'simplelightbox';
 // Додатковий імпорт стилів

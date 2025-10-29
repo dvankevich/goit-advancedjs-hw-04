@@ -96,3 +96,11 @@ export function messageError(message) {
     message: message,
   });
 }
+
+export function showHtmlObject(htmlObject) {
+  htmlObject.classList.remove('visually-hidden');
+}
+
+export function hideHtmlObject(htmlObject) {
+  htmlObject.classList.add('visually-hidden');
+}
