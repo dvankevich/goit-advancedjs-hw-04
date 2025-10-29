@@ -25,8 +25,15 @@ const simpleLightBox = new SimpleLightbox('.gallery a', {
 });
 
 searchButton.addEventListener('click', searchButtonHandler);
+const loadMoreButton = document.querySelector('.load-more-button');
+loadMoreButton.addEventListener('click', loadMoreButtonHandler);
 
-function searchButtonHandler(event) {
+let page = 1;
+let searchTermGlobal = '';
+let perPage = 15; // items per page
+let totalHits = 0;
+
+async function searchButtonHandler(event) {
   event.preventDefault();
   let searchTerm = String(searchInput.value.trim());
   searchTerm = searchTerm.replace(/[*]/g, ''); // видалення спецсимволів
@@ -39,35 +46,113 @@ function searchButtonHandler(event) {
     );
     searchInput.value = ''; // clear input
     drawGallery(myGallery, ''); // clear gallery
+    hideHtmlObject(loadMoreButton);
     return;
   }
 
   refs.loader.classList.add('is-active');
+  drawGallery(myGallery, ''); // clear gallery
+  refs.loader.classList.remove('is-active');
 
-  getImagesAxios(searchTerm)
-    .finally(() => {
-      refs.loader.classList.remove('is-active');
-    })
-    .then(images => {
-      if (images.hits.length === 0) {
-        messageError(
-          'Sorry, there are no images matching<br> your search query. Please, try again!'
-        );
-        searchInput.value = ''; // clear input
-        drawGallery(myGallery, ''); // clear gallery
-      } else {
-        searchInput.value = ''; // clear input
+  searchTermGlobal = searchTerm; // save searchTerm in global variable;
+  page = 1;
 
-        galleryMarkdown = getGalleryMarkdown(images.hits);
+  images = await getImagesAxios(searchTerm, page, perPage);
 
-        drawGallery(myGallery, galleryMarkdown);
-        simpleLightBox.refresh();
-      }
-    })
-    .catch(error => {
-      console.error('сталося щось дивне', error);
-    });
+  totalHits = images.totalHits;
+  if (images.hits.length === 0) {
+    messageError(
+      'Sorry, there are no images matching<br> your search query. Please, try again!'
+    );
+    searchInput.value = ''; // clear input
+    hideHtmlObject(loadMessage);
+    drawGallery(myGallery, ''); // clear gallery
+  } else {
+    searchInput.value = ''; // clear input
+
+    galleryMarkdown = getGalleryMarkdown(images.hits);
+
+    refs.loader.classList.remove('is-active');
+    drawGallery(myGallery, galleryMarkdown);
+
+    simpleLightBox.refresh();
+
+    if (totalHits > page * perPage) {
+      showHtmlObject(loadMoreButton);
+    } else {
+      messageWarning(
+        "We're sorry, but you've reached<br>the end of search results."
+      );
+      hideHtmlObject(loadMoreButton);
+    }
+  }
 }
+
+async function loadMoreButtonHandler(event) {
+  event.preventDefault();
+  page += 1;
+  let galleryMarkdown = '';
+  let images = '';
+
+  refs.loader.classList.add('is-active');
+  hideHtmlObject(loadMoreButton);
+
+  images = await getImagesAxios(searchTermGlobal, page, perPage); // використовуємо глобальний searchTerm
+
+  totalHits = images.totalHits;
+  if (images.hits.length === 0) {
+    // тут вже не перша сторінка і якщо результат пошуку пустий то більше зображень нема
+    messageError(
+      "We're sorry, but you've reached<br>the end of search results."
+    );
+  } else {
+    galleryMarkdown = getGalleryMarkdown(images.hits);
+    drawGallery(myGallery, galleryMarkdown, 'beforeend'); // додаємо зображення на екран
+    simpleLightBox.refresh();
+    // scroll
+    const galleryItem = document.querySelector('.gallery-item');
+    window.scrollBy({
+      top: galleryItem.getBoundingClientRect().height * 2,
+      left: 0,
+      behavior: 'smooth',
+    });
+
+    if (totalHits > page * perPage) {
+      showHtmlObject(loadMoreButton);
+    } else {
+      messageWarning(
+        "We're sorry, but you've reached<br>the end of search results."
+      );
+      hideHtmlObject(loadMoreButton);
+    }
+  }
+  refs.loader.classList.remove('is-active');
+}
+
+//   getImagesAxios(searchTerm)
+//     .finally(() => {
+//       refs.loader.classList.remove('is-active');
+//     })
+//     .then(images => {
+//       if (images.hits.length === 0) {
+//         messageError(
+//           'Sorry, there are no images matching<br> your search query. Please, try again!'
+//         );
+//         searchInput.value = ''; // clear input
+//         drawGallery(myGallery, ''); // clear gallery
+//       } else {
+//         searchInput.value = ''; // clear input
+
+//         galleryMarkdown = getGalleryMarkdown(images.hits);
+
+//         drawGallery(myGallery, galleryMarkdown);
+//         simpleLightBox.refresh();
+//       }
+//     })
+//     .catch(error => {
+//       console.error('сталося щось дивне', error);
+//     });
+// }
 
 // обробка інших помилок
 window.onerror = (message, source, lineno, colno, error) => {
