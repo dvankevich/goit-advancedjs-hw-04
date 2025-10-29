@@ -1,51 +1,18 @@
-//import { getImages } from './js/pixabay-api';
 import { getImagesAxios } from './js/pixabay-api';
-import { getGalleryMarkdown, drawGallery } from './js/render-functions';
+import {
+  getGalleryMarkdown,
+  drawGallery,
+  messageWarning,
+  messageError,
+} from './js/render-functions';
 import SimpleLightbox from 'simplelightbox';
 // Додатковий імпорт стилів
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import iziToast from 'izitoast';
-// Додатковий імпорт стилів
-import 'izitoast/dist/css/iziToast.min.css';
 
 const refs = {
   loader: document.querySelector('.js-loader'),
 };
-
-const iziCommon = {
-  message: 'Common message',
-  theme: 'dark',
-  position: 'topRight',
-  titleColor: '#fff',
-  titleSize: '16px',
-  titleLineHeight: '1.5',
-  messageColor: '#fff',
-  messageSize: '16px',
-  messageLineHeight: '1.5',
-  imageWidth: 24,
-};
-
-const notifications = {
-  success: {
-    ...iziCommon,
-    title: 'OK',
-    color: '#59a10d',
-    iconUrl: 'ok-icon.svg',
-  },
-  error: {
-    ...iziCommon,
-    title: 'Error',
-    color: '#ef4040',
-    iconUrl: 'error-icon.svg',
-  },
-  warning: {
-    ...iziCommon,
-    title: 'Warning',
-    color: '#ffa000',
-    iconUrl: 'caution-icon.svg',
-  },
-};
-
+const minSearchTermLength = 2;
 const myGallery = document.querySelector('.gallery');
 const searchButton = document.querySelector('.search-button');
 const searchInput = document.querySelector('.search-input');
@@ -63,20 +30,16 @@ function searchButtonHandler(event) {
   searchTerm = searchTerm.replace(/[*]/g, ''); // видалення спецсимволів
   let galleryMarkdown = '';
   let images = '';
-  // console.log(searchTerm.length);
 
-  if (!searchTerm || searchTerm.length < 3) {
-    iziToast.warning({
-      ...notifications.warning,
-      message: 'Enter data for search, please. Min. 3 symbols.',
-    });
-    // console.log('Enter data for search, please. Min. 3 symbols.');
+  if (!searchTerm || searchTerm.length < minSearchTermLength) {
+    messageWarning(
+      `Enter data for search, please. Min. ${minSearchTermLength} symbols.`
+    );
     searchInput.value = ''; // clear input
     drawGallery(myGallery, ''); // clear gallery
     return;
   }
 
-  //console.log(`fetch data from backend with search term: ${searchTerm}`);
   refs.loader.classList.add('is-active');
 
   getImagesAxios(searchTerm)
@@ -85,14 +48,9 @@ function searchButtonHandler(event) {
     })
     .then(images => {
       if (images.hits.length === 0) {
-        iziToast.error({
-          ...notifications.error,
-          message:
-            'Sorry, there are no images matching<br> your search query. Please, try again!',
-        });
-        // console.log(
-        //   'Sorry, there are no images matching your search query. Please, try again!'
-        // );
+        messageError(
+          'Sorry, there are no images matching<br> your search query. Please, try again!'
+        );
         searchInput.value = ''; // clear input
         drawGallery(myGallery, ''); // clear gallery
       } else {

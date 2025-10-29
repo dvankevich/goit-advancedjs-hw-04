@@ -1,3 +1,7 @@
+import iziToast from 'izitoast';
+// Додатковий імпорт стилів
+import 'izitoast/dist/css/iziToast.min.css';
+
 function getItemMarkdown(item) {
   // webformatURL — посилання на маленьке зображення для списку карток у галереї
   // largeImageURL — посилання на велике зображення для модального вікна
@@ -43,4 +47,52 @@ export function getGalleryMarkdown(images) {
 
 export function drawGallery(gallery, markdown) {
   gallery.innerHTML = markdown;
+}
+
+const iziCommon = {
+  message: 'Common message',
+  theme: 'dark',
+  position: 'topRight',
+  titleColor: '#fff',
+  titleSize: '16px',
+  titleLineHeight: '1.5',
+  messageColor: '#fff',
+  messageSize: '16px',
+  messageLineHeight: '1.5',
+  imageWidth: 24,
+};
+
+const notifications = {
+  success: {
+    ...iziCommon,
+    //title: 'OK',
+    color: '#59a10d',
+    iconUrl: 'ok-icon.svg',
+  },
+  error: {
+    ...iziCommon,
+    //title: 'Error',
+    color: '#ef4040',
+    iconUrl: 'error-icon.svg',
+  },
+  warning: {
+    ...iziCommon,
+    //title: 'Warning',
+    color: '#ffa000',
+    iconUrl: 'caution-icon.svg',
+  },
+};
+
+export function messageWarning(message) {
+  iziToast.warning({
+    ...notifications.warning,
+    message: message,
+  });
+}
+
+export function messageError(message) {
+  iziToast.error({
+    ...notifications.error,
+    message: message,
+  });
 }

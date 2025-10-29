@@ -14,6 +14,19 @@ p {
   margin: 0;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}
+
 body {
   font-family: "Montserrat", sans-serif;
   font-weight: 400;
@@ -149,4 +162,27 @@ body {
   background: url(/izi-close.svg) !important;
   background-repeat: no-repeat !important;
   background-position: 50% 50% !important;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.load-more-button {
+  width: 125px;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  margin-left: 8px;
+  background-color: #4e75ff;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.load-more-button:hover {
+  background-color: #6c8cff;
 }
