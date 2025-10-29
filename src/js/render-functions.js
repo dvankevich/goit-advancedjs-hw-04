@@ -45,8 +45,23 @@ export function getGalleryMarkdown(images) {
   return images.map(getItemMarkdown).join('');
 }
 
-export function drawGallery(gallery, markdown) {
-  gallery.innerHTML = markdown;
+/**
+ * @param {Object} gallery gallery DOM object
+ * @param {String} markdown HTML markdown for gallery
+ * @param {String} mode:
+ *                      full (default) - replace with InnerHTML
+ *                      beforebegin, afterbegin, beforeend, afterend - insert with insertAdjacentHTML
+ */
+export function drawGallery(gallery, markdown, mode = 'full') {
+  switch (mode) {
+    case 'full':
+      gallery.innerHTML = markdown;
+      break;
+
+    default:
+      gallery.insertAdjacentHTML(mode, markdown);
+      break;
+  }
 }
 
 const iziCommon = {
