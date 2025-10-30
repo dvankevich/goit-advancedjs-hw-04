@@ -12,8 +12,8 @@
 
 ### Expected result
 
-виводиться повідомлення з текстом "Sorry, there are no images matching your
-search query. Please try again!"
+виводиться повідомлення з текстом "Enter data for search, please. Min. 2
+symbols."
 
 ## 2.порожній результат пошуку
 

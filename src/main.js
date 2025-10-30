@@ -14,24 +14,26 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 const refs = {
   loader: document.querySelector('.js-loader'),
 };
-const minSearchTermLength = 2;
+
 const myGallery = document.querySelector('.gallery');
 const searchButton = document.querySelector('.search-button');
 const searchInput = document.querySelector('.search-input');
+const loadMoreButton = document.querySelector('.load-more-button');
+
 const simpleLightBox = new SimpleLightbox('.gallery a', {
   captionsData: 'alt',
   captionDelay: 250,
   overlayOpacity: 0.8,
 });
 
-searchButton.addEventListener('click', searchButtonHandler);
-const loadMoreButton = document.querySelector('.load-more-button');
-loadMoreButton.addEventListener('click', loadMoreButtonHandler);
-
+const minSearchTermLength = 2;
 let page = 1;
 let searchTermGlobal = '';
 let perPage = 15; // items per page
 let totalHits = 0;
+
+searchButton.addEventListener('click', searchButtonHandler);
+loadMoreButton.addEventListener('click', loadMoreButtonHandler);
 
 async function searchButtonHandler(event) {
   event.preventDefault();
@@ -52,7 +54,7 @@ async function searchButtonHandler(event) {
 
   refs.loader.classList.add('is-active');
   drawGallery(myGallery, ''); // clear gallery
-  refs.loader.classList.remove('is-active');
+  hideHtmlObject(loadMoreButton);
 
   searchTermGlobal = searchTerm; // save searchTerm in global variable;
   page = 1;
@@ -65,7 +67,7 @@ async function searchButtonHandler(event) {
       'Sorry, there are no images matching<br> your search query. Please, try again!'
     );
     searchInput.value = ''; // clear input
-    hideHtmlObject(loadMessage);
+    refs.loader.classList.remove('is-active');
     drawGallery(myGallery, ''); // clear gallery
   } else {
     searchInput.value = ''; // clear input
@@ -128,31 +130,6 @@ async function loadMoreButtonHandler(event) {
   }
   refs.loader.classList.remove('is-active');
 }
-
-//   getImagesAxios(searchTerm)
-//     .finally(() => {
-//       refs.loader.classList.remove('is-active');
-//     })
-//     .then(images => {
-//       if (images.hits.length === 0) {
-//         messageError(
-//           'Sorry, there are no images matching<br> your search query. Please, try again!'
-//         );
-//         searchInput.value = ''; // clear input
-//         drawGallery(myGallery, ''); // clear gallery
-//       } else {
-//         searchInput.value = ''; // clear input
-
-//         galleryMarkdown = getGalleryMarkdown(images.hits);
-
-//         drawGallery(myGallery, galleryMarkdown);
-//         simpleLightBox.refresh();
-//       }
-//     })
-//     .catch(error => {
-//       console.error('сталося щось дивне', error);
-//     });
-// }
 
 // обробка інших помилок
 window.onerror = (message, source, lineno, colno, error) => {
